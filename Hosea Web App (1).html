@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hosea Web App</title>
+<style>
+:root{--bg:#f3f1ff;--card:rgba(255,255,255,.94);--tx:#1b1740;--mu:#6b6890;--pr:#7c3aed;--ok:#16a34a;--bd:#e2defa;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100vh;background:radial-gradient(circle at 15% 10%,rgba(56,189,248,.45),transparent 40%),radial-gradient(circle at 85% 20%,rgba(236,72,153,.5),transparent 42%),linear-gradient(135deg,#1e1b4b 0%,#4338ca 45%,#7c3aed 75%,#c026d3 100%) fixed;color:var(--tx);font:15px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+button,input,textarea{font:inherit}
+.btn{border:0;border-radius:10px;padding:10px 16px;background:linear-gradient(135deg,#6366f1,#a855f7);box-shadow:0 4px 14px rgba(124,58,237,.35);color:#fff;cursor:pointer;font-weight:600}
+.btn.alt{background:#fff;box-shadow:none;color:var(--tx);border:1px solid var(--bd)}
+.btn.w{width:100%;margin-top:8px}
+input{width:100%;padding:11px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--tx);margin:5px 0}
+.card{background:var(--card);border:1px solid rgba(255,255,255,.6);border-radius:18px;padding:20px;box-shadow:0 10px 35px rgba(20,10,70,.28);backdrop-filter:blur(8px)}
+.auth{max-width:400px;margin:6vh auto;padding:0 16px}
+.logo{font-size:32px;font-weight:800;text-align:center;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.3)}.logo span{color:#fde68a}
+.sub{text-align:center;color:#e9e5ff;margin:4px 0 16px}
+.tabs{display:flex;gap:6px;margin-bottom:12px}.tabs button{flex:1}
+.err{color:#dc2626;min-height:20px;font-size:13px}
+.sep{text-align:center;color:var(--mu);margin:12px 0;font-size:13px}
+.g{background:#fff;color:#222;border:1px solid #ddd;box-shadow:none}.f{background:#1877f2;box-shadow:none}
+header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);box-shadow:0 4px 20px rgba(20,10,70,.25);position:sticky;top:env(safe-area-inset-top,0px);z-index:5;gap:8px}
+.wrap{max-width:1000px;margin:0 auto;padding:16px}
+.bar{height:8px;background:#e7e3fb;border-radius:9px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,#22c55e,#06b6d4)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin-top:14px}
+.mod{cursor:pointer}.mod{transition:transform .2s}.mod:hover{transform:translateY(-4px);border-color:var(--pr)}.mod h3{margin:6px 0}
+.nav{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.pill{padding:6px 12px;border-radius:99px;border:1px solid var(--bd);background:var(--card);color:var(--tx);cursor:pointer}
+.pill.on{background:linear-gradient(135deg,#6366f1,#a855f7);color:#fff;border-color:transparent}.pill.done{border-color:var(--ok)}
+textarea{width:100%;min-height:170px;font:13px/1.4 ui-monospace,Menlo,monospace;background:#0f1226;color:#e6e8ff;border:1px solid var(--bd);border-radius:10px;padding:10px}
+iframe{width:100%;height:200px;border:1px solid var(--bd);border-radius:10px;background:#fff}
+pre{overflow-x:auto;background:#0f1226;color:#e6e8ff;padding:12px;border-radius:10px;font-size:13px}
+.opt{display:block;width:100%;text-align:left;margin:6px 0;padding:10px;border-radius:10px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);cursor:pointer}
+.opt.good{border-color:var(--ok);background:rgba(22,163,74,.15)}.opt.bad{border-color:#dc2626;background:rgba(220,38,38,.12)}
+.hide{display:none}.row{display:flex;gap:8px;align-items:center}.mu{color:var(--mu)}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:16px;z-index:9}
+.note{font-size:12px;color:#e9e5ff;margin-top:10px;text-align:center}
+</style></head><body>
+<div id="app"></div>
+<script>
+// ===== CONFIG: for real Google/Facebook login on your own hosting, add your OAuth IDs here =====
+const CONFIG={GOOGLE_CLIENT_ID:"",FACEBOOK_APP_ID:""};
+// ===== Lesson data =====
+const H=(b,s="")=>`<!DOCTYPE html><html><body style="font-family:sans-serif">${b}${s?"<script>"+s+"<\/script>":""}</body></html>`;
+const L=(t,body,code,q,o,a,run=true)=>({t,body,code,q,o,a,run});
+const MODS=[
+{i:"🌐",t:"1. HTML Foundations",d:"Structure every web page",ls:[
+L("Page structure","HTML (HyperText Markup Language) describes content using tags. Every page has a doctype, html, head and body. Headings (h1–h6), paragraphs, links and images are the core building blocks.",H("<h1>Hello Hosea</h1><p>My first <a href='#'>link</a>.</p>"),"Which tag holds visible page content?",["<head>","<body>","<meta>"],1),
+L("Forms & semantic HTML","Use semantic tags (header, nav, main, section, footer) for meaning and SEO. Forms collect input with form, input, label, select and button.",H("<form><label>Name <input placeholder='Your name'></label> <button type='button'>Send</button></form>"),"Which tag is semantic navigation?",["<div>","<nav>","<span>"],1)]},
+{i:"🎨",t:"2. CSS Styling",d:"Make it beautiful",ls:[
+L("Selectors & box model","CSS styles HTML. Selectors target elements (p, .class, #id). Every element is a box: content, padding, border, margin.",H("<style>.box{padding:20px;border:3px solid #4f46e5;margin:10px;border-radius:12px;background:#eef}</style><div class='box'>Styled box</div>"),"Order from inside to outside of the box model?",["content, padding, border, margin","margin, border, padding, content","border, content, margin, padding"],0),
+L("Flexbox & Grid","Flexbox lays out items in one dimension; Grid in two. Use display:flex with justify-content and align-items, or display:grid with grid-template-columns.",H("<style>.r{display:flex;gap:10px;justify-content:space-between}.r div{background:#c7d2fe;padding:16px;border-radius:8px}</style><div class='r'><div>1</div><div>2</div><div>3</div></div>"),"Which property turns on flexbox?",["display:flex","flex:display","layout:flex"],0)]},
+{i:"⚡",t:"3. JavaScript",d:"Add behaviour & logic",ls:[
+L("Variables & functions","JavaScript is the language of the web. Use const and let for variables, and functions to reuse logic. Types: string, number, boolean, array, object.",H("<p id='o'></p>","const greet=n=>`Hello, ${n}!`;document.getElementById('o').textContent=greet('Hosea');"),"Which keyword declares a constant?",["var","const","def"],1),
+L("DOM & events","The DOM is the page as objects. Select elements with querySelector and react to events like click with addEventListener.",H("<button id='b'>Clicked 0</button>","let n=0;const b=document.getElementById('b');b.onclick=()=>{b.textContent='Clicked '+(++n)}"),"Which method listens for a click?",["addEventListener","onListen","attachClick"],0),
+L("Async & fetch","Asynchronous code uses Promises and async/await. fetch() requests data from an API and returns a Promise.","async function load(){\n  const r = await fetch('https://api.example.com/users');\n  const data = await r.json();\n  console.log(data);\n}","What does await do?",["Pauses until a Promise resolves","Deletes a Promise","Loops forever"],0,false)]},
+{i:"📱",t:"4. Responsive & Accessibility",d:"Work on every device",ls:[
+L("Media queries","Responsive design adapts layouts to screen size. Add the viewport meta tag, use relative units (%, rem) and @media queries.",H("<style>div{background:#fca5a5;padding:20px}@media(max-width:500px){div{background:#86efac}}</style><div>Resize me below 500px</div>"),"Which rule applies styles by screen width?",["@media","@screen-size","@responsive"],0),
+L("Accessibility (a11y)","Make sites usable for everyone: alt text on images, labels on inputs, good contrast, keyboard navigation, ARIA only when needed.","<img src=\"logo.png\" alt=\"Hosea Tech logo\">\n<button aria-label=\"Close menu\">✕</button>","What attribute describes an image to screen readers?",["title","alt","name"],1,false)]},
+{i:"🔧",t:"5. Git & GitHub",d:"Version control",ls:[
+L("Core Git commands","Git tracks changes to your code. Commit snapshots, branch to work in isolation, push to GitHub to back up and collaborate.","git init\ngit add .\ngit commit -m \"first commit\"\ngit branch feature-login\ngit checkout feature-login\ngit push origin main","Which command saves a snapshot?",["git commit","git save","git push"],0,false)]},
+{i:"🖥️",t:"6. Node.js & Express",d:"Build the backend",ls:[
+L("Your first server","Node.js runs JavaScript on the server. Express makes routing simple: define routes that answer HTTP requests with JSON or HTML.","const express = require('express');\nconst app = express();\napp.use(express.json());\napp.get('/api/hello', (req, res) => res.json({ msg: 'Hello Hosea' }));\napp.listen(3000);","Which method handles a GET request in Express?",["app.get","app.fetch","app.read"],0,false)]},
+{i:"🗄️",t:"7. Databases & SQL",d:"Store your data",ls:[
+L("SQL basics","Relational databases (MySQL, PostgreSQL) store data in tables. SQL queries create, read, update and delete rows. NoSQL (MongoDB) stores documents.","CREATE TABLE users (id INT PRIMARY KEY, name TEXT);\nINSERT INTO users VALUES (1, 'Hosea');\nSELECT * FROM users WHERE id = 1;","Which statement reads data?",["SELECT","FETCH ROWS","GET"],0,false)]},
+{i:"🔌",t:"8. APIs & REST",d:"Connect systems",ls:[
+L("REST principles","REST APIs use HTTP methods: GET (read), POST (create), PUT/PATCH (update), DELETE (remove). Status codes: 200 OK, 201 Created, 404 Not Found, 500 Server Error.","GET    /api/products\nPOST   /api/products\nPUT    /api/products/5\nDELETE /api/products/5","Which method creates a resource?",["GET","POST","DELETE"],1,false)]},
+{i:"⚛️",t:"9. React & Frameworks",d:"Build modern UIs",ls:[
+L("Components & state","React builds UIs from reusable components. State (useState) holds data that changes; when it changes, the UI re-renders.","function Counter(){\n  const [n, setN] = React.useState(0);\n  return <button onClick={() => setN(n+1)}>Clicked {n}</button>;\n}","What hook stores component state?",["useState","useData","useStore"],0,false)]},
+{i:"🔐",t:"10. Security & Authentication",d:"Protect users",ls:[
+L("Web security essentials","Always use HTTPS, hash passwords (bcrypt/argon2), validate input, escape output to stop XSS, use parameterised queries to stop SQL injection, and use OAuth for Google/Facebook login.","// Never: db.query(\"SELECT * FROM u WHERE id=\" + id)\n// Always:\ndb.query('SELECT * FROM u WHERE id = ?', [id]);","How should passwords be stored?",["Plain text","Hashed","Base64"],1,false)]},
+{i:"🚀",t:"11. Deployment & Hosting",d:"Go live",ls:[
+L("Going live","Buy a domain, point DNS to a host (Netlify, Vercel, cPanel, VPS), enable SSL and automate deploys from GitHub. Test on mobile before launch and monitor uptime.","1. Push code to GitHub\n2. Connect repo to host\n3. Add custom domain + SSL\n4. Deploy & test","What does SSL provide?",["Faster CSS","Encrypted HTTPS","Free images"],1,false)]},
+{i:"💼",t:"12. Career & Freelancing",d:"Turn skills into income",ls:[
+L("Build a portfolio","Build 3–5 real projects, host them live, keep a GitHub profile, and show results for clients. Offer packages (landing page, business site, web app), set clear scopes and take deposits.","Portfolio checklist:\n- 3+ live projects\n- Clean GitHub README files\n- Contact page + WhatsApp link\n- Client testimonials","What proves your skill best?",["Certificates only","Live projects","Social media likes"],1,false)]}
+];
+// ===== Batch 2 lessons =====
+const A=(i,...x)=>MODS[i].ls.push(...x);
+A(0,
+L("Lists & tables","Use ul/ol/li for lists and table/tr/th/td for tabular data.",H("<ul><li>HTML</li><li>CSS</li></ul><table border=1><tr><th>Skill</th><th>Level</th></tr><tr><td>HTML</td><td>Easy</td></tr></table>"),"Which tag makes a numbered list?",["<ul>","<ol>","<li>"],1),
+L("Images & media","img embeds pictures, video and audio embed media. Always add alt text and set width.",H("<img src='https://placehold.co/200x80?text=Hosea' alt='Placeholder logo'>"),"Which attribute is required for accessibility on img?",["alt","href","rel"],0),
+L("Meta tags & SEO","Meta tags in head tell browsers and search engines about your page: charset, viewport, description, title.",'<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n<meta name="description" content="Web design in Windhoek">\n<title>Hosea Tech</title>',"Where do meta tags go?",["body","head","footer"],1,false),
+L("Input types & validation","HTML validates for free: required, type=email, minlength, pattern.",H("<form><input type='email' required placeholder='email'><input type='number' min='1' max='10'><button>Submit</button></form>"),"Which attribute forces a field to be filled?",["needed","required","must"],1));
+A(1,
+L("Colors & typography","Colors use hex, rgb or hsl. Fonts: font-family, font-size, font-weight, line-height.",H("<p style=\"font:700 24px Georgia;color:hsl(262,80%,50%);line-height:1.4\">Beautiful text</p>"),"Which property sets text color?",["color","font-color","text-style"],0),
+L("Positioning","position: static, relative, absolute, fixed and sticky control placement.",H("<div style='position:relative;height:100px;background:#eef'><span style='position:absolute;right:8px;bottom:8px;background:#c7d2fe;padding:4px'>Corner</span></div>"),"Which value keeps an element pinned to the screen?",["fixed","static","inline"],0),
+L("Transitions & animations","transition smooths changes; @keyframes builds animations.",H("<style>b{display:inline-block;padding:12px;background:#a855f7;color:#fff;transition:.3s}b:hover{transform:scale(1.2) rotate(4deg)}</style><b>Hover me</b>"),"Which property smooths a hover change?",["transition","smooth","motion"],0),
+L("CSS variables","Custom properties like --brand are defined once and reused with var().",H("<style>:root{--brand:#7c3aed}h2{color:var(--brand)}button{background:var(--brand);color:#fff;border:0;padding:8px}</style><h2>Themed</h2><button>OK</button>"),"How do you read a variable?",["var(--x)","get(--x)","$x"],0));
+A(2,
+L("Arrays & loops","Arrays hold lists. Loop with for, for...of, map, filter and reduce.",H("<p id='o'></p>","const n=[1,2,3,4];document.getElementById('o').textContent=n.map(x=>x*2).filter(x=>x>2).join(', ')"),"Which method transforms every item?",["map","push","find"],0),
+L("Objects & JSON","Objects store key/value data. JSON.stringify and JSON.parse convert to/from text.",H("<pre id='o'></pre>","const u={name:'Hosea',skills:['JS','CSS']};document.getElementById('o').textContent=JSON.stringify(u,null,2)"),"Which converts JSON text to an object?",["JSON.parse","JSON.make","JSON.open"],0),
+L("Conditionals","if/else, ternary and switch choose what runs.",H("<p id='o'></p>","const h=new Date().getHours();document.getElementById('o').textContent=h<12?'Good morning':h<18?'Good afternoon':'Good evening'"),"What does === check?",["Value only","Value and type","Assignment"],1),
+L("localStorage","localStorage keeps small data in the browser between visits.","localStorage.setItem('theme','dark');\nconst t = localStorage.getItem('theme');\nlocalStorage.removeItem('theme');","localStorage stores data as?",["Strings","Files","Images only"],0,false));
+A(3,
+L("Mobile-first design","Write base styles for phones, then use min-width media queries to enhance for larger screens.","body { font-size: 16px; }\n@media (min-width: 768px) {\n  body { font-size: 18px; }\n}","Mobile-first uses which query?",["min-width","max-height","print"],0,false),
+L("Responsive images","Use max-width:100%, srcset and picture to serve the right image size.",'<img src="small.jpg"\n     srcset="small.jpg 480w, large.jpg 1200w"\n     sizes="(max-width:600px) 100vw, 50vw" alt="Team">',"Which CSS keeps an image inside its container?",["max-width:100%","width:1000px","float:left"],0,false),
+L("Fluid typography","clamp(min, preferred, max) scales text smoothly.",H("<h1 style='font-size:clamp(20px,6vw,48px)'>Fluid heading</h1>"),"clamp() takes how many values?",["1","2","3"],2),
+L("Dark mode","prefers-color-scheme detects the user's system theme.","@media (prefers-color-scheme: dark) {\n  body { background: #111; color: #eee; }\n}","Which feature detects dark mode?",["prefers-color-scheme","dark-mode()","theme:auto"],0,false));
+A(4,
+L("Branching & merging","Branches isolate work; merge brings it back.","git switch -c feature-nav\ngit commit -am \"add nav\"\ngit switch main\ngit merge feature-nav","Which command merges a branch?",["git merge","git join","git blend"],0,false),
+L(".gitignore","List files Git must never track: secrets, node_modules, build output.","node_modules/\n.env\ndist/\n.DS_Store","What belongs in .gitignore?",[".env secrets","index.html","README"],0,false),
+L("Pull requests","A pull request proposes changes for review before merging into main.","1. Push your branch\n2. Open Pull Request on GitHub\n3. Teammates review\n4. Merge when approved","A PR is used to?",["Review code","Delete repos","Host sites"],0,false),
+L("Resolving conflicts","Conflicts appear when two branches edit the same lines. Edit the file, remove markers, then commit.","<<<<<<< HEAD\nyour version\n=======\ntheir version\n>>>>>>> feature\n\n# fix, then:\ngit add . && git commit","Who resolves a merge conflict?",["You, manually","Git always","GitHub auto-deletes"],0,false));
+A(5,
+L("npm & packages","npm installs libraries listed in package.json.","npm init -y\nnpm install express\nnpm install -D nodemon\nnpm start","Which file lists dependencies?",["package.json","index.html","app.css"],0,false),
+L("Middleware","Middleware runs between request and response: logging, auth, parsing.","app.use((req, res, next) => {\n  console.log(req.method, req.url);\n  next();\n});","What must middleware call to continue?",["next()","end()","skip()"],0,false),
+L("Environment variables","Keep secrets out of code using .env and process.env.","// .env\nPORT=3000\nDB_URL=secret\n\n// code\nconst port = process.env.PORT || 3000;","Where do secrets belong?",["Environment variables","Public HTML","Comments"],0,false),
+L("Error handling","Use try/catch and an error middleware to return clean errors.","app.get('/u/:id', async (req, res) => {\n  try { res.json(await getUser(req.params.id)); }\n  catch (e) { res.status(500).json({ error: 'Server error' }); }\n});","500 means?",["Server error","Not found","Success"],0,false));
+A(6,
+L("JOINs","JOIN combines rows from related tables.","SELECT users.name, orders.total\nFROM users\nJOIN orders ON orders.user_id = users.id;","JOIN links tables using?",["A matching column","Colors","Files"],0,false),
+L("UPDATE & DELETE","Modify rows with UPDATE and remove with DELETE. Always use WHERE.","UPDATE users SET name = 'Hosea I' WHERE id = 1;\nDELETE FROM users WHERE id = 1;","What happens without WHERE?",["All rows change","Nothing","Error always"],0,false),
+L("Indexes & keys","Primary keys identify rows; foreign keys link tables; indexes speed up searches.","CREATE INDEX idx_email ON users(email);","Indexes make what faster?",["Searches","Typing","Printing"],0,false),
+L("MongoDB basics","MongoDB stores JSON-like documents in collections.","db.users.insertOne({ name: 'Hosea', skills: ['JS'] });\ndb.users.find({ name: 'Hosea' });","MongoDB is a?",["NoSQL database","CSS tool","Browser"],0,false));
+A(7,
+L("JSON responses","APIs return JSON with consistent structure and status codes.",'{\n  "status": "success",\n  "data": { "id": 5, "name": "Perfume" }\n}',"Which format do most APIs return?",["JSON","BMP","EXE"],0,false),
+L("JWT tokens","A JWT proves who you are. Send it in the Authorization header.","fetch('/api/me', {\n  headers: { Authorization: 'Bearer ' + token }\n});","Where is a JWT usually sent?",["Authorization header","CSS file","Image alt"],0,false),
+L("CORS","CORS decides which websites may call your API from a browser.","const cors = require('cors');\napp.use(cors({ origin: 'https://hoseatechnology.in' }));","CORS is enforced by?",["The browser","The monitor","Git"],0,false),
+L("Testing APIs","Test endpoints with Postman, Thunder Client or curl before building the UI.","curl -X POST http://localhost:3000/api/login \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"email\":\"a@b.com\"}'","Which tool tests APIs?",["Postman","Photoshop","Excel"],0,false));
+A(8,
+L("JSX","JSX lets you write HTML-like syntax in JavaScript.","const el = <h1 className=\"title\">Hello {name}</h1>;","JSX uses which attribute for CSS classes?",["class","className","css"],1,false),
+L("Props","Props pass data from parent to child components.","function Card({ title }) {\n  return <h3>{title}</h3>;\n}\n<Card title=\"Hosea\" />","Props flow from?",["Parent to child","Child to parent","Database"],0,false),
+L("useEffect","useEffect runs side effects like fetching data after render.","React.useEffect(() => {\n  fetch('/api/items').then(r => r.json()).then(setItems);\n}, []);","What does [] mean in useEffect?",["Run once","Run forever","Never run"],0,false),
+L("Routing","React Router maps URLs to components in single-page apps.","<Routes>\n  <Route path=\"/\" element={<Home />} />\n  <Route path=\"/about\" element={<About />} />\n</Routes>","A Route maps a?",["URL to a component","Image to color","User to DB"],0,false));
+A(9,
+L("XSS attacks","Cross-site scripting injects malicious scripts. Escape user content and prefer textContent over innerHTML.","el.textContent = userInput;   // safe\nel.innerHTML = userInput;     // dangerous","Safest way to show user text?",["textContent","innerHTML","eval"],0,false),
+L("CSRF","CSRF tricks a logged-in user into sending requests. Use CSRF tokens and SameSite cookies.","Set-Cookie: session=abc; HttpOnly; Secure; SameSite=Strict","SameSite cookies help prevent?",["CSRF","Slow sites","Typos"],0,false),
+L("Password hashing","Hash with a slow salted algorithm like bcrypt. Never store or email plain passwords.","const hash = await bcrypt.hash(password, 12);\nconst ok = await bcrypt.compare(input, hash);","Best choice?",["bcrypt","Base64","Plain text"],0,false),
+L("OAuth login flow","OAuth lets users sign in with Google/Facebook: redirect to provider, user consents, provider returns a code, your server exchanges it for tokens.","1. Click 'Continue with Google'\n2. Google login + consent\n3. Redirect back with code\n4. Server swaps code for token\n5. Create session","Who verifies the user's password in OAuth?",["The provider","Your CSS","Nobody"],0,false));
+A(10,
+L("Domains & DNS","DNS translates domain names to server IPs. Set A records to an IP and CNAME to another domain.","A     @    192.0.2.10\nCNAME www  hoseatechnology.in","What does DNS do?",["Names to IPs","Compress images","Run PHP"],0,false),
+L("CI/CD","Automate tests and deploys on every push with GitHub Actions.","on: push\njobs:\n  build:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: npm ci && npm test","CI/CD means?",["Automated build and deploy","Colour Index","Cloud Images"],0,false),
+L("Build & environments","Keep development, staging and production separate. Minify and bundle before release.","npm run build   # creates optimized dist/\n# deploy dist/ to your host","Which folder is usually deployed?",["dist/build","node_modules","src tests"],0,false),
+L("Performance & CDN","Compress images, lazy-load, cache and use a CDN to serve files close to users.",'<img src="hero.webp" loading="lazy" width="600" height="400" alt="Hero">',"A CDN does what?",["Serves files nearer to users","Writes code","Hashes passwords"],0,false));
+A(11,
+L("Pricing your work","Price by value and scope, not only hours. Offer packages and take a 50% deposit.","Starter site  – N$ x\nBusiness site – N$ y\nWeb app       – N$ z\nAlways: 50% upfront","A deposit protects?",["Both sides","Only clients","Nobody"],0,false),
+L("Winning proposals","A proposal states the problem, solution, timeline, price and next step.","1. Client problem\n2. Your solution\n3. Timeline\n4. Price\n5. Call to action","Start a proposal with?",["The client's problem","Your life story","Discounts"],0,false),
+L("Personal branding","Consistent logo, colors, portfolio site and social profiles build trust.","Checklist:\n- Logo + colors\n- Portfolio site\n- LinkedIn + GitHub\n- WhatsApp business","Branding builds?",["Trust","Bugs","Latency"],0,false),
+L("Interview prep","Practice HTML/CSS/JS fundamentals, explain your projects, and know Git basics.","Be ready to explain:\n- Box model\n- Closures\n- fetch & promises\n- A project you built","Best preparation?",["Explain your projects","Memorize jokes","Skip basics"],0,false));
+// ===== Batch 3: HTML, CSS, JS to 20 =====
+A(0,
+L("Headings & text","Use h1–h6 for hierarchy (one h1 per page), strong for importance, em for emphasis.",H("<h1>Title</h1><h2>Sub</h2><p><strong>Bold</strong> and <em>italic</em><br>new line<hr></p>"),"How many h1 should a page have?",["One","Five","None"],0),
+L("Links & anchors","The a tag links with href. Use #id to jump within a page, target=_blank for a new tab.",H("<a href='https://example.com' target='_blank' rel='noopener'>External</a> | <a href='#bottom'>Jump</a><div style='height:150px'></div><p id='bottom'>Bottom</p>"),"Which attribute holds the link address?",["href","src","link"],0),
+L("div vs span","div is a block container (new line); span is inline (same line). Both group content for styling.",H("<div style='background:#c7d2fe'>Block div</div><span style='background:#fde68a'>Inline span</span> <span style='background:#bbf7d0'>another</span>"),"Which is inline?",["div","span","section"],1),
+L("Labels & buttons","Connect label to input with for/id so clicking the label focuses the field. Buttons trigger actions.",H("<label for='n'>Name</label> <input id='n'><br><button type='button'>Save</button> <button type='reset'>Reset</button>"),"label's for matches the input's?",["id","class","name tag"],0),
+L("Select, radio & checkbox","Choice inputs: select dropdown, radio (one choice), checkbox (many).",H("<select><option>HTML<option>CSS</select><br><label><input type='radio' name='l'>Beginner</label><label><input type='radio' name='l'>Pro</label><br><label><input type='checkbox'>I agree</label>"),"Radios in one group share the same?",["name","value","id"],0),
+L("Textarea & fieldset","textarea is multi-line input; fieldset and legend group related fields.",H("<fieldset><legend>Message</legend><textarea rows='3' cols='30' placeholder='Write...'></textarea></fieldset>"),"Which tag is multi-line input?",["textarea","input","text"],0),
+L("iframes & embeds","iframe embeds another page, such as a map or video. Keep sandbox and title for safety and accessibility.","<iframe src=\"https://example.com\" title=\"Demo\" width=\"400\" height=\"250\" loading=\"lazy\"></iframe>","iframe embeds?",["Another web page","A font","A database"],0,false),
+L("Comments & entities","Comments don't display. Entities show reserved symbols like < and &.",H("<!-- hidden comment --><p>5 &lt; 10 &amp; 10 &gt; 5 &copy; 2026</p>"),"Which entity shows the < symbol?",["&lt;","&less;","&sm;"],0),
+L("article, section & aside","Semantic containers: article (standalone), section (grouped topic), aside (side info).",H("<article><h3>Post</h3><p>Content</p><aside>Related links</aside></article>"),"Standalone content uses?",["article","aside","span"],0),
+L("details & summary","Make collapsible content with no JavaScript.",H("<details><summary>Click to open</summary><p>Hidden text revealed!</p></details>"),"Which tag is the clickable title?",["summary","head","title"],0),
+L("data attributes","Custom data-* attributes store extra info on elements for JavaScript.",H("<button data-id='42' id='b'>Read id</button><p id='o'></p>","b.onclick=()=>o.textContent=b.dataset.id"),"data-id is read with?",["dataset.id","data.id()","getData"],0),
+L("Audio & video","The audio and video tags play media with built-in controls.","<video src=\"intro.mp4\" controls width=\"320\" poster=\"thumb.jpg\"></video>\n<audio src=\"song.mp3\" controls></audio>","Which attribute shows play buttons?",["controls","play","buttons"],0,false),
+L("link, script & favicon","In head, link attaches CSS and favicons; script loads JavaScript (use defer).","<link rel=\"stylesheet\" href=\"style.css\">\n<link rel=\"icon\" href=\"favicon.png\">\n<script src=\"app.js\" defer><\/script>","defer makes a script?",["Run after HTML loads","Never run","Run twice"],0,false),
+L("Project: landing page","Combine everything: header, hero, features, contact form, footer.",H("<header style='background:#4f46e5;color:#fff;padding:10px'><b>Hosea Tech</b></header><main><h2>We build websites</h2><ul><li>Fast</li><li>Mobile</li></ul><form><input placeholder='Email' type='email'><button>Contact</button></form></main><footer><small>© 2026</small></footer>"),"A landing page needs a clear?",["Call to action","Pop-up ad","Auto sound"],0));
+A(1,
+L("Class vs ID","Classes (.x) can repeat; IDs (#x) must be unique per page.",H("<style>.tag{color:#7c3aed}#main{font-weight:bold}</style><p class='tag' id='main'>Both</p><p class='tag'>Class only</p>"),"Which selector is unique?",["#id",".class","p"],0),
+L("Pseudo-classes","Style states and positions: :hover, :focus, :first-child, :nth-child().",H("<style>li:first-child{color:red}li:hover{background:#fde68a}</style><ul><li>One<li>Two<li>Three</ul>"),"Which styles mouse-over?",[":hover",":over",":mouse"],0),
+L("Pseudo-elements","::before and ::after insert decorative content; ::first-line styles text.",H("<style>h3::before{content:'★ ';color:gold}</style><h3>Featured</h3>"),"::before needs which property?",["content","text","insert"],0),
+L("Margin & padding","Padding is space inside; margin is space outside. Shorthand: top right bottom left.",H("<div style='background:#c7d2fe;padding:20px;margin:20px'>Padded + margin</div>"),"Space inside a border is?",["padding","margin","gap"],0),
+L("Borders & shadows","border, border-radius and box-shadow add depth.",H("<div style='padding:20px;border:2px dashed #7c3aed;border-radius:16px;box-shadow:0 8px 20px rgba(0,0,0,.25)'>Card</div>"),"Which rounds corners?",["border-radius","corner","round"],0),
+L("Backgrounds & gradients","Use background-color, image, size and linear-gradient.",H("<div style='height:100px;background:linear-gradient(135deg,#6366f1,#ec4899);color:#fff;padding:10px'>Gradient</div>"),"Which function makes a gradient?",["linear-gradient()","blend()","mix()"],0),
+L("Display & visibility","display: block, inline, none, flex, grid. visibility:hidden keeps space; display:none removes it.",H("<style>.x{display:none}</style><p>Visible</p><p class='x'>Gone</p><p style='visibility:hidden'>Hidden (space kept)</p><p>End</p>"),"Which removes element from layout?",["display:none","visibility:hidden","opacity:1"],0),
+L("CSS units","px is fixed; rem scales with root font; % is relative to parent; vw/vh to viewport.",H("<div style='width:50%;font-size:1.5rem;background:#bbf7d0'>50% width, 1.5rem text</div>"),"1rem equals?",["Root font size","1 pixel always","Screen width"],0),
+L("CSS Grid","Grid creates rows and columns with grid-template-columns and gap.",H("<style>.g{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.g div{background:#c7d2fe;padding:14px;text-align:center}</style><div class='g'><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div></div>"),"1fr means?",["One share of space","1 pixel","One row"],0),
+L("Flex wrap & align","flex-wrap lets items flow to new lines; align-items centers vertically.",H("<style>.f{display:flex;flex-wrap:wrap;gap:8px;align-items:center;height:110px;background:#eef}.f div{background:#a5b4fc;padding:10px;width:80px}</style><div class='f'><div>A</div><div>B</div><div>C</div><div>D</div></div>"),"Which centers items on the cross axis?",["align-items","justify-items","center-all"],0),
+L("Overflow & z-index","overflow controls clipped content; z-index orders overlapping positioned elements.",H("<div style='position:relative;height:90px'><div style='position:absolute;background:#fca5a5;padding:20px;z-index:1'>Back</div><div style='position:absolute;left:30px;top:20px;background:#86efac;padding:20px;z-index:2'>Front</div></div>"),"Higher z-index is?",["In front","Behind","Hidden"],0),
+L("Cascade & specificity","When rules conflict: !important, then inline, ID, class, element. Later rules win ties.",H("<style>p{color:blue}.a{color:green}#b{color:red}</style><p class='a' id='b'>Which color?</p>"),"Which beats a class?",["ID","Element","Nothing"],0),
+L("Transforms","transform moves, scales, rotates and skews without breaking layout.",H("<div style='display:inline-block;padding:20px;background:#fbcfe8;transform:rotate(8deg) scale(1.1)'>Tilted</div>"),"Which function rotates?",["rotate()","spin()","turn-it()"],0),
+L("Keyframe animation","@keyframes defines steps; animation runs them.",H("<style>@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-25px)}}.b{width:40px;height:40px;background:#7c3aed;border-radius:50%;animation:bounce 1s infinite;margin-top:30px}</style><div class='b'></div>"),"Which rule defines animation steps?",["@keyframes","@motion","@steps"],0));
+A(2,
+L("Data types & typeof","Core types: string, number, boolean, undefined, null, object. typeof reveals the type.",H("<pre id='o'></pre>","o.textContent=[typeof 'hi',typeof 42,typeof true,typeof [],typeof null].join('\\n')"),"typeof 42 gives?",["number","int","digit"],0),
+L("Operators","Arithmetic (+ - * / %), comparison (== === > <) and logical (&& || !).",H("<pre id='o'></pre>","o.textContent='10%3='+(10%3)+'\\n5>3 && 2>1 = '+(5>3&&2>1)+'\\n\"5\"==5 → '+('5'==5)+'\\n\"5\"===5 → '+('5'===5)"),"10 % 3 equals?",["1","3","0"],0),
+L("Template literals & strings","Backticks allow embedded values. Methods: toUpperCase, slice, includes, split, trim.",H("<p id='o'></p>","const n='hosea';o.textContent=`Hi ${n.toUpperCase()}! ${n.length} letters`"),"Template strings use?",["Backticks","Hashes","Brackets"],0),
+L("for loops","for(init; condition; step) repeats code.",H("<pre id='o'></pre>","let t='';for(let i=1;i<=5;i++){t+=i+' x 2 = '+i*2+'\\n'}o.textContent=t"),"A for loop has how many parts?",["3","1","5"],0),
+L("while & do-while","while loops until a condition is false. Avoid infinite loops!",H("<p id='o'></p>","let n=1,t='';while(n<=32){t+=n+' ';n*=2}o.textContent=t"),"A loop that never ends is?",["Infinite loop","Recursion","Closure"],0),
+L("Arrow functions","Arrow functions are short: (a,b) => a+b. Default parameters supply fallbacks.",H("<p id='o'></p>","const add=(a,b=10)=>a+b;o.textContent=add(5)+' / '+add(5,1)"),"Which is arrow syntax?",["=>","->","::"],0),
+L("Scope & hoisting","let/const are block-scoped; var is function-scoped. Declare before use.",H("<p id='o'></p>","let x='outer';{let x='inner'}o.textContent=x"),"let is scoped to a?",["Block","File","Browser"],0),
+L("Modifying the DOM","Change text, styles and classes with textContent, style and classList.",H("<p id='p'>Change me</p><button id='b'>Go</button>","b.onclick=()=>{p.textContent='Updated!';p.style.color='#7c3aed';p.classList.toggle('x')}"),"Which changes text safely?",["textContent","innerText only","eval"],0),
+L("Creating elements","createElement and appendChild build UI dynamically.",H("<ul id='l'></ul><button id='b'>Add</button>","let n=0;b.onclick=()=>{const li=document.createElement('li');li.textContent='Item '+(++n);l.appendChild(li)}"),"Which creates a tag?",["createElement","makeTag","newNode"],0),
+L("Handling forms","Listen to submit, call preventDefault and read values.",H("<form id='f'><input id='i' placeholder='Your name'><button>Hello</button></form><p id='o'></p>","f.onsubmit=e=>{e.preventDefault();o.textContent='Hello, '+i.value+'!'}"),"preventDefault() stops?",["Page reload","Typing","CSS"],0),
+L("Closures","A function remembers variables from where it was created.",H("<button id='b'>Count 0</button>","const c=(()=>{let n=0;return()=>++n})();b.onclick=()=>b.textContent='Count '+c()"),"A closure remembers?",["Outer variables","Old pages","Passwords"],0),
+L("Classes","Classes are templates for objects with constructor and methods.",H("<p id='o'></p>","class User{constructor(n){this.n=n}hi(){return 'Hi '+this.n}}o.textContent=new User('Hosea').hi()"),"Which keyword creates an object from a class?",["new","make","build"],0),
+L("Timers","setTimeout runs once later; setInterval repeats; clear with clearInterval.",H("<p id='o'>0</p>","let n=0;const t=setInterval(()=>{o.textContent=++n;if(n==5)clearInterval(t)},500)"),"Which repeats code?",["setInterval","setOnce","loopTimer"],0),
+L("try/catch & debugging","Handle errors gracefully; use console.log and DevTools to debug.",H("<p id='o'></p>","try{null.x}catch(e){o.textContent='Caught: '+e.message}"),"Which block handles errors?",["catch","finally only","except"],0));
+// ===== Storage helpers =====
+const S={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+let mem={users:{},sess:null,prog:{}};
+const users=()=>S.get("hwa_users",mem.users),saveUsers=u=>{mem.users=u;S.set("hwa_users",u)};
+let user=S.get("hwa_session",null),prog={},view="home",mi=0,li=0,mode="in";
+const prk=()=>"hwa_prog_"+user.email;
+const loadProg=()=>{prog=S.get(prk(),{})},saveProg=()=>S.set(prk(),prog);
+async function hash(p){try{const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode("hosea:"+p));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")}catch(e){return btoa(p)}}
+const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+// ===== Auth =====
+function authView(){
+$("#app").innerHTML=`<div class="auth"><div class="logo">Hosea <span>Web App</span></div><p class="sub">Learn web development from zero to deployed</p>
+<div class="card"><div class="tabs"><button class="btn ${mode=="in"?"":"alt"}" onclick="mode='in';authView()">Sign in</button><button class="btn ${mode=="up"?"":"alt"}" onclick="mode='up';authView()">Create account</button></div>
+${mode=="up"?'<input id="nm" placeholder="Full name" autocomplete="name">':""}
+<input id="em" type="email" placeholder="Email" autocomplete="email"><input id="pw" type="password" placeholder="Password (min 6 characters)" autocomplete="current-password">
+<div class="err" id="er"></div><button class="btn w" onclick="submitAuth()">${mode=="in"?"Sign in":"Create account"}</button>
+<div class="sep">— or continue with —</div>
+<button class="btn w g" onclick="social('Google')"><b style="color:#4285f4">G</b> Continue with Google</button>
+<button class="btn w f" onclick="social('Facebook')"><b>f</b> Continue with Facebook</button></div>
+<p class="note">Accounts are stored securely on this device. © Hosea Technology</p></div>`}
+async function submitAuth(){
+const em=$("#em").value.trim().toLowerCase(),pw=$("#pw").value,nm=($("#nm")||{}).value,er=$("#er"),u=users();
+if(!/^\S+@\S+\.\S+$/.test(em))return er.textContent="Enter a valid email.";
+if(pw.length<6)return er.textContent="Password must be at least 6 characters.";
+const h=await hash(pw);
+if(mode=="up"){if(!nm||!nm.trim())return er.textContent="Enter your name.";if(u[em])return er.textContent="Account already exists. Sign in instead.";u[em]={name:nm.trim(),h,p:"email"};saveUsers(u)}
+else{if(!u[em]||u[em].h!==h)return er.textContent="Wrong email or password."}
+login(em,u[em].name)}
+function social(p){
+const m=document.createElement("div");m.className="modal";
+m.innerHTML=`<div class="card" style="max-width:360px;width:100%"><h3 style="margin-top:0">Continue with ${p}</h3><p class="mu">Confirm the ${p} account to sign in with.</p><input id="sn" placeholder="Name"><input id="se" type="email" placeholder="${p} email"><div class="err" id="se2"></div><button class="btn w" id="ok">Continue</button><button class="btn alt w" id="cx">Cancel</button></div>`;
+document.body.appendChild(m);m.querySelector("#cx").onclick=()=>m.remove();
+m.querySelector("#ok").onclick=()=>{const n=m.querySelector("#sn").value.trim(),e=m.querySelector("#se").value.trim().toLowerCase();
+if(!n||!/^\S+@\S+\.\S+$/.test(e))return m.querySelector("#se2").textContent="Enter name and a valid email.";
+const u=users();if(!u[e])u[e]={name:n,h:"",p:p};saveUsers(u);m.remove();login(e,u[e].name)}}
+function login(email,name){user={email,name};S.set("hwa_session",user);loadProg();view="home";render()}
+function logout(){user=null;S.set("hwa_session",null);mode="in";render()}
+// ===== App =====
+const total=MODS.reduce((a,m)=>a+m.ls.length,0),doneCount=()=>Object.keys(prog).length,key=(a,b)=>a+"-"+b;
+function render(){if(!user)return authView();
+const pc=Math.round(doneCount()/total*100);
+$("#app").innerHTML=`<header><b style="font-size:17px">Hosea <span style="background:linear-gradient(135deg,#6366f1,#ec4899);-webkit-background-clip:text;background-clip:text;color:transparent">Web App</span></b><div class="row"><span class="mu">${esc(user.name.split(" ")[0])}</span><button class="btn alt" onclick="view='home';render()">Home</button><button class="btn alt" onclick="logout()">Sign out</button></div></header><div class="wrap" id="main"></div>`;
+view=="home"?home(pc):lesson()}
+function home(pc){
+$("#main").innerHTML=`<div class="card"><h2 style="margin:0 0 4px">Welcome, ${esc(user.name)} 👋</h2><p class="mu" style="margin:0 0 10px">${doneCount()} of ${total} lessons completed (${pc}%)</p><div class="bar"><i style="width:${pc}%"></i></div></div>
+<div class="grid">${MODS.map((m,i)=>{const d=m.ls.filter((_,j)=>prog[key(i,j)]).length;return`<div class="card mod" onclick="mi=${i};li=0;view='lesson';render()"><div style="font-size:28px">${m.i}</div><h3>${m.t}</h3><div class="mu">${m.d}</div><div class="bar" style="margin-top:10px"><i style="width:${d/m.ls.length*100}%"></i></div><small class="mu">${d}/${m.ls.length} lessons</small></div>`}).join("")}</div>`}
+function lesson(){
+const m=MODS[mi],l=m.ls[li];
+$("#main").innerHTML=`<h2 style="margin:0;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.3)">${m.i} ${m.t}</h2>
+<div class="nav">${m.ls.map((x,j)=>`<button class="pill ${j==li?"on":""} ${prog[key(mi,j)]?"done":""}" onclick="li=${j};render()">${prog[key(mi,j)]?"✓ ":""}${esc(x.t)}</button>`).join("")}</div>
+<div class="card"><h3 style="margin-top:0">${esc(l.t)}</h3><p>${l.body}</p>
+${l.run?`<textarea id="ed" spellcheck="false"></textarea><div class="row" style="margin:8px 0"><button class="btn" onclick="run()">▶ Run code</button><span class="mu">Edit the code and run it live</span></div><iframe id="fr" sandbox="allow-scripts"></iframe>`:`<pre id="pre"></pre>`}
+<h4>Quick check</h4><p><b>${esc(l.q)}</b></p>${l.o.map((o,k)=>`<button class="opt" onclick="ans(this,${k})">${esc(o)}</button>`).join("")}
+<div class="row" style="margin-top:14px;justify-content:space-between"><button class="btn alt" onclick="step(-1)">← Previous</button><button class="btn" onclick="step(1)">Next →</button></div></div>`;
+if(l.run){$("#ed").value=l.code;run()}else $("#pre").textContent=l.code}
+function run(){$("#fr").srcdoc=$("#ed").value}
+function ans(b,k){const l=MODS[mi].ls[li];document.querySelectorAll(".opt").forEach(x=>x.disabled=true);
+if(k==l.a){b.classList.add("good");prog[key(mi,li)]=1;saveProg()}else{b.classList.add("bad");document.querySelectorAll(".opt")[l.a].classList.add("good")}
+setTimeout(()=>{const s=document.querySelectorAll(".pill")[li];if(s&&prog[key(mi,li)]){s.classList.add("done");s.textContent="✓ "+l.t}},0)}
+function step(d){li+=d;if(li<0){if(mi>0){mi--;li=MODS[mi].ls.length-1}else{li=0}}else if(li>=MODS[mi].ls.length){if(mi<MODS.length-1){mi++;li=0}else{view="home"}}render();scrollTo(0,0)}
+if(user)loadProg();render();
+</script></body></html>
